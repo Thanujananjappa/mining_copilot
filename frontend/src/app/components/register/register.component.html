@@ -1,0 +1,157 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h1>⛏ Mining Data Platform</h1>
+      <h2>Create Account</h2>
+      <p>Sign up to access the mining analytics dashboard</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Success Alert -->
+      <div class="alert alert-success" *ngIf="success">
+        <span class="alert-icon">✅</span>
+        {{ success }}
+      </div>
+
+      <!-- Error Alert -->
+      <div class="alert alert-danger" *ngIf="error">
+        <span class="alert-icon">⚠</span>
+        {{ error }}
+      </div>
+
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input 
+            type="text" 
+            id="username"
+            formControlName="username"
+            class="form-control"
+            [class.is-invalid]="submitted && f['username'].errors"
+            placeholder="Choose a username"
+          />
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['username'].errors">
+          <span *ngIf="f['username'].errors['required']">Username is required</span>
+          <span *ngIf="f['username'].errors['minlength']">Username must be at least 3 characters</span>
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📧</span>
+          <input 
+            type="email" 
+            id="email"
+            formControlName="email"
+            class="form-control"
+            [class.is-invalid]="submitted && f['email'].errors"
+            placeholder="your@email.com"
+          />
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['email'].errors">
+          <span *ngIf="f['email'].errors['required']">Email is required</span>
+          <span *ngIf="f['email'].errors['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <!-- Full Name Field -->
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👨‍💼</span>
+          <input 
+            type="text" 
+            id="fullName"
+            formControlName="fullName"
+            class="form-control"
+            [class.is-invalid]="submitted && f['fullName'].errors"
+            placeholder="Your full name"
+          />
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['fullName'].errors">
+          <span *ngIf="f['fullName'].errors['required']">Full name is required</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input 
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="form-control"
+            [class.is-invalid]="submitted && f['password'].errors"
+            placeholder="Create a strong password"
+          />
+          <button 
+            type="button" 
+            class="toggle-password"
+            (click)="togglePassword()"
+          >
+            {{ showPassword ? '👁' : '👁‍🗨' }}
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['password'].errors">
+          <span *ngIf="f['password'].errors['required']">Password is required</span>
+          <span *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</span>
+        </div>
+        <div class="password-requirements">
+          <small>Password must contain: uppercase, lowercase, number</small>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔐</span>
+          <input 
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="form-control"
+            [class.is-invalid]="submitted && f['confirmPassword'].errors"
+            placeholder="Re-enter your password"
+          />
+          <button 
+            type="button" 
+            class="toggle-password"
+            (click)="toggleConfirmPassword()"
+          >
+            {{ showConfirmPassword ? '👁' : '👁‍🗨' }}
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['confirmPassword'].errors">
+          <span *ngIf="f['confirmPassword'].errors['required']">Please confirm your password</span>
+          <span *ngIf="f['confirmPassword'].errors['passwordMismatch']">Passwords do not match</span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="btn btn-primary btn-block"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">Create Account</span>
+        <span *ngIf="loading">
+          <span class="spinner"></span> Creating account...
+        </span>
+      </button>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        Already have an account? 
+        <a routerLink="/login">Sign in here</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,10 +1,12 @@
 # Flask Core
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 flask==3.0.0
 flask-cors==4.0.0
 gunicorn==21.2.0
 python-dotenv==1.0.0
 
-# Authentication (NEW)
+# Authentication
 flask-jwt-extended==4.6.0
 flask-bcrypt==1.0.1
 pyjwt==2.8.0
@@ -17,7 +19,10 @@ sqlalchemy==2.0.23
 mistralai==0.0.11
 sentence-transformers==2.2.2
 transformers==4.36.0
-torch==2.1.2
+# torch version pinned; let pip resolve sub-dependencies
+torch==2.1.2+cpu
+# torchvision (needed for torch image models, optional)
+torchvision==0.16.2
 
 # Vector Database
 chromadb==0.4.18
