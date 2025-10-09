@@ -1,0 +1,88 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>⛏️ Mining Data Platform</h1>
+      <h2>Sign In</h2>
+      <p>Enter your credentials to access the dashboard</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Error Alert -->
+      <div class="alert alert-danger" *ngIf="error">
+        <span class="alert-icon">⚠️</span>
+        {{ error }}
+      </div>
+
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Username or Email</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input 
+            type="text" 
+            id="username"
+            formControlName="username"
+            class="form-control"
+            [class.is-invalid]="submitted && f['username'].errors"
+            placeholder="Enter username or email"
+          />
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['username'].errors">
+          <span *ngIf="f['username'].errors['required']">Username is required</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input 
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="form-control"
+            [class.is-invalid]="submitted && f['password'].errors"
+            placeholder="Enter password"
+          />
+          <button 
+            type="button" 
+            class="toggle-password"
+            (click)="togglePassword()"
+          >
+            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="submitted && f['password'].errors">
+          <span *ngIf="f['password'].errors['required']">Password is required</span>
+        </div>
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" /> Remember me
+        </label>
+        <a href="#" class="forgot-password">Forgot password?</a>
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="btn btn-primary btn-block"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading">
+          <span class="spinner"></span> Signing in...
+        </span>
+      </button>
+
+      <!-- Register Link -->
+      <div class="register-link">
+        Don't have an account? 
+        <a routerLink="/register">Create one here</a>
+      </div>
+    </form>
+  </div>
+</div>

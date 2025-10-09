@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    build: ./mysql
+    container_name: mining_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/kaggle_data:/docker-entrypoint-initdb.d/data
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    command: --secure-file-priv=/docker-entrypoint-initdb.d/data
+    networks:
+      - mining_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 30s
+      retries: 10
+
+  # ChromaDB Vector Database
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: mining_chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - mining_network
+
+  # Flask Backend
+  backend:
+    build: ./backend
+    container_name: mining_backend
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DATABASE}
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    networks:
+      - mining_network
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 wsgi:app
+
+  # Angular Frontend
+  frontend:
+    build: ./frontend
+    container_name: mining_frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - mining_network
+    environment:
+      - API_URL=http://backend:5000
+
+networks:
+  mining_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  chroma_data:
